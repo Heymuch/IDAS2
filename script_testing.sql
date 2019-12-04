@@ -8,5 +8,5 @@ end;
 
 -- ||| Nastavení uživateli administrátorská práva
 BEGIN
-
+    USER_UPDATE_ADMIN(8, 1);
 end;

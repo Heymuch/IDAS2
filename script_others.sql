@@ -108,6 +108,7 @@ ALTER TABLE USERS ADD CHECK ( ADMIN IN (0, 1) );
 ALTER TABLE USERS_STATUS ADD CHECK ( STATUS_ID IN (0, 1) );
 
 -- ||| FUNKCE
+-- Funkce pro vytvoření nového uživatele; Vrací ID nového uživatele; TESTED
 CREATE OR REPLACE FUNCTION USER_NEW(
         p_username USERS.USERNAME%TYPE,
         p_password USERS.PASSWORD%TYPE,
@@ -116,15 +117,16 @@ CREATE OR REPLACE FUNCTION USER_NEW(
         p_lastname USERS.LAST_NAME%TYPE,
         p_email USERS.EMAIL%TYPE,
         p_status USERS.STATUS_ID%TYPE)
-    RETURN USERS.USER_ID%TYPE IS
+    RETURN USERS.USER_ID%TYPE AS
         v_id USERS.USER_ID%TYPE;
     BEGIN
         INSERT INTO USERS(USERNAME, PASSWORD, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL, STATUS_ID)
         VALUES (p_username, p_password, p_firstname, p_middlename, p_lastname, p_email, p_status);
         SELECT USER_ID INTO v_id FROM USERS WHERE USERNAME = p_username;
+        COMMIT;
         RETURN v_id;
 
-        EXCEPTION WHEN OTHERS THEN RETURN NULL;
+        --EXCEPTION WHEN OTHERS THEN RETURN NULL;
     END;
 
 CREATE OR REPLACE FUNCTION USER_LOGIN(p_username USERS.USERNAME%TYPE, p_password USERS.PASSWORD%TYPE)
@@ -180,9 +182,11 @@ CREATE OR REPLACE PROCEDURE USER_UPDATE_DETAILS(p_user_id USERS.USER_ID%TYPE, p_
         UPDATE USERS SET FIRST_NAME = p_firstname, MIDDLE_NAME = p_middlename, LAST_NAME = p_lastname, EMAIL = p_email WHERE USER_ID = p_user_id;
     END;
 
+-- Procedura pro přiřazení/odejmutí administrátorských práv uživateli; TESTED
 CREATE OR REPLACE PROCEDURE USER_UPDATE_ADMIN(p_user_id USERS.USER_ID%TYPE, p_admin USERS.ADMIN%TYPE) IS
     BEGIN
         UPDATE USERS SET ADMIN = p_admin WHERE USER_ID = p_user_id;
+        COMMIT;
     END;
 
 CREATE OR REPLACE PROCEDURE STUDENT_UPDATE_YEAR(p_student_id STUDENTS.STUDENT_ID%TYPE, p_year STUDENTS.YEAR%TYPE) IS
