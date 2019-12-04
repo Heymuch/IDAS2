@@ -47,3 +47,8 @@ end;
 BEGIN
     USER_UPDATE_LOGIN(2, 'hejduk', 'qwertz');
 end;
+
+-- ||| Změna základních údajů o uživateli
+BEGIN
+    USER_UPDATE_DETAILS(2, 'Jiří', '', 'Hejduk', 'st11111@student.upce.cz');
+end;

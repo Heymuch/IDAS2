@@ -183,9 +183,11 @@ CREATE OR REPLACE PROCEDURE USER_UPDATE_LOGIN(p_user_id USERS.USER_ID%TYPE, p_us
         COMMIT;
     END;
 
+-- Procedura pro změnu základní informací o uživateli
 CREATE OR REPLACE PROCEDURE USER_UPDATE_DETAILS(p_user_id USERS.USER_ID%TYPE, p_firstname USERS.FIRST_NAME%TYPE, p_middlename USERS.MIDDLE_NAME%TYPE, p_lastname USERS.LAST_NAME%TYPE, p_email USERS.EMAIL%TYPE) IS
     BEGIN
         UPDATE USERS SET FIRST_NAME = p_firstname, MIDDLE_NAME = p_middlename, LAST_NAME = p_lastname, EMAIL = p_email WHERE USER_ID = p_user_id;
+        COMMIT;
     END;
 
 -- Procedura pro přiřazení/odejmutí administrátorských práv uživateli; TESTED
