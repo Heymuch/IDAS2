@@ -169,15 +169,18 @@ CREATE OR REPLACE FUNCTION STUDENT_NEW(p_user_id USERS.USER_ID%TYPE, p_year STUD
 
 
 -- ||| PROCEDURY
--- Procedura pro změnu stavu uživatele
+-- Procedura pro změnu stavu uživatele; TESTED
 CREATE OR REPLACE PROCEDURE USER_UPDATE_STATUS(p_user_id USERS.USER_ID%TYPE, p_status USERS_STATUS.STATUS_ID%TYPE) IS
     BEGIN
         UPDATE USERS SET STATUS_ID = p_status WHERE USER_ID = p_user_id;
+        COMMIT;
     END;
 
+-- Procedura pro změnu přihlašovacích údajů uživatele; TESTED
 CREATE OR REPLACE PROCEDURE USER_UPDATE_LOGIN(p_user_id USERS.USER_ID%TYPE, p_username USERS.USERNAME%TYPE, p_password USERS.PASSWORD%TYPE) IS
     BEGIN
         UPDATE USERS SET USERNAME = p_username, PASSWORD = p_password WHERE USER_ID = p_user_id;
+        COMMIT;
     END;
 
 CREATE OR REPLACE PROCEDURE USER_UPDATE_DETAILS(p_user_id USERS.USER_ID%TYPE, p_firstname USERS.FIRST_NAME%TYPE, p_middlename USERS.MIDDLE_NAME%TYPE, p_lastname USERS.LAST_NAME%TYPE, p_email USERS.EMAIL%TYPE) IS

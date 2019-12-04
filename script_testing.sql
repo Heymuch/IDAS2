@@ -37,3 +37,13 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE(v_row.LAST_NAME);
     end loop;
 end;
+
+-- ||| Změna stavu uživatele
+BEGIN
+    USER_UPDATE_STATUS(2, 1);
+end;
+
+-- ||| Změna přihlašovacích údajů uživatele
+BEGIN
+    USER_UPDATE_LOGIN(2, 'hejduk', 'qwertz');
+end;
