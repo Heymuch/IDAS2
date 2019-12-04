@@ -19,7 +19,6 @@ DROP TABLE FILES CASCADE CONSTRAINTS;
 create table USERS_STATUS
 (
     STATUS_ID NUMBER        not null
-        check ( STATUS_ID IN (0, 1) )
         check ( STATUS_ID IN (0, 1) ),
     NAME      NVARCHAR2(15) not null
 )
@@ -51,8 +50,6 @@ create table USERS
         constraint USERS_STATUS_FK
             references USERS_STATUS,
     ADMIN       NUMBER default 0 not null
-        check ( ADMIN IN (0, 1) )
-        check ( ADMIN IN (0, 1) )
         check ( ADMIN IN (0, 1) )
 )
 /
