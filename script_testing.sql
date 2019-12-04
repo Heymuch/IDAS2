@@ -25,3 +25,15 @@ BEGIN
     v_var := USER_LOGIN('nothing', 'nothing');
     DBMS_OUTPUT.PUT_LINE('LOGIN USER: ' || v_var);
 end;
+
+-- ||| Získání cursoru s daty o uživateli
+DECLARE
+    v_cursor SYS_REFCURSOR := USER_GET(1);
+    v_row VW_USERS%ROWTYPE;
+BEGIN
+    LOOP
+        FETCH v_cursor INTO v_row;
+        EXIT WHEN v_cursor%NOTFOUND;
+        DBMS_OUTPUT.PUT_LINE(v_row.LAST_NAME);
+    end loop;
+end;
