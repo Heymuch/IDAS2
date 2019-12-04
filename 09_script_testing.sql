@@ -59,3 +59,8 @@ DECLARE
 BEGIN
     v_var := STUDENT_NEW(2);
 end;
+
+-- ||| Změna ročníku studenta
+BEGIN
+    STUDENT_UPDATE_YEAR(1, 3);
+end;

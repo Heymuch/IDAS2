@@ -1,0 +1,44 @@
+-- ||| PROCEDURY/FUNKCE STUDENTS
+-- Funkce pro vytvořní studenta; parametry: ID uživatele, nepovinný rok; TESTED
+CREATE OR REPLACE FUNCTION STUDENT_NEW(p_user_id USERS.USER_ID%TYPE, p_year STUDENTS.YEAR%TYPE DEFAULT 1)
+    RETURN STUDENTS.STUDENT_ID%TYPE IS
+        v_id STUDENTS.STUDENT_ID%TYPE;
+    BEGIN
+        INSERT INTO STUDENTS(USER_ID, YEAR) VALUES (p_user_id, p_year);
+        SELECT STUDENT_ID INTO v_id FROM STUDENTS WHERE USER_ID = p_user_id;
+        COMMIT;
+        RETURN v_id;
+
+        --EXCEPTION WHEN OTHERS THEN RETURN NULL;
+    END;
+
+-- Funkce vrací cursor s daty o studentovi v závislosti na ID uživatele
+CREATE OR REPLACE FUNCTION STUDENT_GET_BY_USER(p_user_id USERS.USER_ID%TYPE)
+    RETURN SYS_REFCURSOR IS
+        v_cursor SYS_REFCURSOR;
+    BEGIN
+        OPEN v_cursor FOR SELECT * FROM VW_STUDENTS WHERE USER_ID = p_user_id;
+        RETURN v_cursor;
+
+        --EXCEPTION WHEN OTHERS THEN RETURN NULL;
+    END;
+
+-- Funkce vrací cursor s daty o studentovi v závislosti na ID studenta
+CREATE OR REPLACE FUNCTION STUDENT_GET_BY_
+
+CREATE OR REPLACE FUNCTION STUDENT_GET_ID(p_user_id USERS.USER_ID%TYPE)
+    RETURN STUDENTS.STUDENT_ID%TYPE IS
+        v_id STUDENTS.STUDENT_ID%TYPE;
+    BEGIN
+        SELECT STUDENT_ID INTO v_id FROM VW_STUDENTS WHERE USER_ID = p_user_id;
+    end;
+
+CREATE OR REPLACE PROCEDURE STUDENT_GROUP_ADD(p_student_id STUDENTS.STUDENT_ID%TYPE, p_group_id GROUPS.GROUP_ID%TYPE) IS
+    BEGIN
+        INSERT INTO STUDENTS_GROUPS(STUDENT_ID, GROUP_ID) VALUES (p_student_id, p_group_id);
+    END;
+
+CREATE OR REPLACE PROCEDURE STUDENT_GROUP_REMOVE(p_student_id STUDENTS.STUDENT_ID%TYPE, p_group_id GROUPS.GROUP_ID%TYPE) IS
+    BEGIN
+        DELETE FROM STUDENTS_GROUPS WHERE STUDENT_ID = p_student_id AND GROUP_ID = p_group_id;
+    end;

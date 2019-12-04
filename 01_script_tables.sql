@@ -1,3 +1,19 @@
+-- ||| TABULKY
+DROP TABLE CLASSROOMS CASCADE CONSTRAINTS;
+DROP TABLE COMMENTS CASCADE CONSTRAINTS;
+DROP TABLE COURSES CASCADE CONSTRAINTS;
+DROP TABLE GRADES CASCADE CONSTRAINTS;
+DROP TABLE GROUP_MESSAGES CASCADE CONSTRAINTS;
+DROP TABLE GROUPS CASCADE CONSTRAINTS;
+DROP TABLE PRIVATE_MESSAGES CASCADE CONSTRAINTS;
+DROP TABLE STUDENTS CASCADE CONSTRAINTS;
+DROP TABLE STUDENTS_GROUPS CASCADE CONSTRAINTS;
+DROP TABLE TEACHERS CASCADE CONSTRAINTS;
+DROP TABLE TIMETABLES CASCADE CONSTRAINTS;
+DROP TABLE USERS CASCADE CONSTRAINTS;
+DROP TABLE USERS_STATUS CASCADE CONSTRAINTS;
+
+
 create table USERS_STATUS
 (
 	STATUS_ID NUMBER not null
@@ -33,7 +49,6 @@ create table USERS
 			references USERS_STATUS,
 	ADMIN NUMBER default 0 not null
 		check ( ADMIN IN (0, 1) )
-		check ( ADMIN IN (0, 1) )
 )
 /
 
@@ -57,15 +72,6 @@ alter table USERS
 		primary key (USER_ID)
 /
 
-create or replace trigger USERS_INSERT_TRG
-	before insert
-	on USERS
-	for each row when (new.USER_ID IS NULL)
-BEGIN
-        :new.USER_ID := users_id_seq.nextval;
-    END;
-/
-
 create table COURSES
 (
 	COURSE_ID NUMBER not null,
@@ -86,15 +92,6 @@ create unique index COURSES_SHORT_NAME_UINDEX
 alter table COURSES
 	add constraint COURSES_PK
 		primary key (COURSE_ID)
-/
-
-create or replace trigger COURSES_NEW_TRG
-	before insert
-	on COURSES
-	for each row when (new.COURSE_ID IS NULL)
-BEGIN
-        :new.COURSE_ID := courses_id_seq.nextval;
-    END;
 /
 
 create table TEACHERS
@@ -147,24 +144,6 @@ alter table GROUPS
 		primary key (GROUP_ID)
 /
 
-create or replace trigger GROUPS_NEW_TRG
-	before insert
-	on GROUPS
-	for each row when (new.GROUP_ID IS NULL)
-BEGIN
-        :new.GROUP_ID := groups_id_seq.nextval;
-    END;
-/
-
-create or replace trigger TEACHERS_NEW_TRG
-	before insert
-	on TEACHERS
-	for each row when (new.TEACHER_ID IS NULL)
-BEGIN
-        :new.TEACHER_ID := teachers_id_seq.nextval;
-    END;
-/
-
 create table STUDENTS
 (
 	STUDENT_ID NUMBER not null,
@@ -186,15 +165,6 @@ create unique index STUDENTS_USER_ID_UINDEX
 alter table STUDENTS
 	add constraint STUDENTS_PK
 		primary key (STUDENT_ID)
-/
-
-create or replace trigger STUDENTS_NEW_TRG
-	before insert
-	on STUDENTS
-	for each row when (new.STUDENT_ID IS NULL)
-BEGIN
-        :new.STUDENT_ID := students_id_seq.nextval;
-    END;
 /
 
 create table GRADES
@@ -224,15 +194,6 @@ alter table GRADES
 		primary key (GRADE_ID)
 /
 
-create or replace trigger GRADES_NEW_TRG
-	before insert
-	on GRADES
-	for each row when (new.GRADE_ID IS NULL)
-BEGIN
-        :new.GRADE_ID := grades_id_seq.nextval;
-    END;
-/
-
 create table CLASSROOMS
 (
 	CLASSROOM_ID NUMBER not null,
@@ -248,15 +209,6 @@ create unique index CLASSROOMS_CLASSROOM_ID_UINDEX
 alter table CLASSROOMS
 	add constraint CLASSROOMS_PK
 		primary key (CLASSROOM_ID)
-/
-
-create or replace trigger CLASSROOMS_NEW_TRG
-	before insert
-	on CLASSROOMS
-	for each row when (new.CLASSROOM_ID IS NULL)
-BEGIN
-        :new.CLASSROOM_ID := classrooms_id_seq.nextval;
-    END;
 /
 
 create table TIMETABLES
@@ -282,15 +234,6 @@ alter table TIMETABLES
 		primary key (TIMETABLE_ID)
 /
 
-create or replace trigger TIMETABLES_NEW_TRG
-	before insert
-	on TIMETABLES
-	for each row when (new.TIMETABLE_ID IS NULL)
-BEGIN
-        :new.TIMETABLE_ID := timetables_id_seq.nextval;
-    END;
-/
-
 create table GROUP_MESSAGES
 (
 	GMSG_ID NUMBER not null,
@@ -312,15 +255,6 @@ create unique index GROUP_MESSAGES_GMSG_ID_UINDEX
 alter table GROUP_MESSAGES
 	add constraint GROUP_MESSAGES_PK
 		primary key (GMSG_ID)
-/
-
-create or replace trigger GMSG_NEW_TRG
-	before insert
-	on GROUP_MESSAGES
-	for each row when (new.GMSG_ID IS NULL)
-BEGIN
-        :new.GMSG_ID := gmsgs_id_seq.nextval;
-    END;
 /
 
 create table PRIVATE_MESSAGES
@@ -346,15 +280,6 @@ alter table PRIVATE_MESSAGES
 		primary key (PMSG_ID)
 /
 
-create or replace trigger PMSGS_INSERT_TRG
-	before insert
-	on PRIVATE_MESSAGES
-	for each row when (new.PMSG_ID IS NULL)
-BEGIN
-        :new.PMSG_ID := pmsgs_id_seq.nextval;
-    END;
-/
-
 create table COMMENTS
 (
 	COMMENT_ID NUMBER not null,
@@ -376,15 +301,6 @@ create unique index COMMENTS_COMMENT_ID_UINDEX
 alter table COMMENTS
 	add constraint COMMENTS_PK
 		primary key (COMMENT_ID)
-/
-
-create or replace trigger COMMENTS_NEW_TRG
-	before insert
-	on COMMENTS
-	for each row when (new.COMMENT_ID IS NULL)
-BEGIN
-        :new.COMMENT_ID := comments_id_seq.nextval;
-    END;
 /
 
 create table STUDENTS_GROUPS
