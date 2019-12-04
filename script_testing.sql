@@ -52,3 +52,10 @@ end;
 BEGIN
     USER_UPDATE_DETAILS(2, 'Jiří', '', 'Hejduk', 'st11111@student.upce.cz');
 end;
+
+-- ||| Vytvoření nového studenta
+DECLARE
+    v_var STUDENTS.STUDENT_ID%TYPE;
+BEGIN
+    v_var := STUDENT_NEW(2);
+end;

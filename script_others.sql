@@ -155,15 +155,17 @@ CREATE OR REPLACE FUNCTION USER_GET(p_user_id USERS.USER_ID%TYPE)
         EXCEPTION WHEN OTHERS THEN RETURN NULL;
     END;
 
+-- Funkce pro vytvořní studenta; parametry: ID uživatele, nepovinný rok
 CREATE OR REPLACE FUNCTION STUDENT_NEW(p_user_id USERS.USER_ID%TYPE, p_year STUDENTS.YEAR%TYPE DEFAULT 1)
     RETURN STUDENTS.STUDENT_ID%TYPE IS
         v_id STUDENTS.STUDENT_ID%TYPE;
     BEGIN
         INSERT INTO STUDENTS(USER_ID, YEAR) VALUES (p_user_id, p_year);
         SELECT STUDENT_ID INTO v_id FROM STUDENTS WHERE USER_ID = p_user_id;
+        COMMIT;
         RETURN v_id;
 
-        EXCEPTION WHEN OTHERS THEN RETURN NULL;
+        --EXCEPTION WHEN OTHERS THEN RETURN NULL;
     END;
 
 
@@ -183,7 +185,7 @@ CREATE OR REPLACE PROCEDURE USER_UPDATE_LOGIN(p_user_id USERS.USER_ID%TYPE, p_us
         COMMIT;
     END;
 
--- Procedura pro změnu základní informací o uživateli
+-- Procedura pro změnu základní informací o uživateli; TESTED
 CREATE OR REPLACE PROCEDURE USER_UPDATE_DETAILS(p_user_id USERS.USER_ID%TYPE, p_firstname USERS.FIRST_NAME%TYPE, p_middlename USERS.MIDDLE_NAME%TYPE, p_lastname USERS.LAST_NAME%TYPE, p_email USERS.EMAIL%TYPE) IS
     BEGIN
         UPDATE USERS SET FIRST_NAME = p_firstname, MIDDLE_NAME = p_middlename, LAST_NAME = p_lastname, EMAIL = p_email WHERE USER_ID = p_user_id;
