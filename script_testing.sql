@@ -8,7 +8,7 @@ end;
 
 -- ||| Nastavení uživateli administrátorská práva
 BEGIN
-    USER_UPDATE_ADMIN(8, 1);
+    USER_UPDATE_ADMIN(USER_LOGIN('admin', 'heslo'), 1);
 end;
 
 -- ||| Přihlášení uživatele do systému
@@ -16,12 +16,12 @@ DECLARE
     v_var USERS.USER_ID%TYPE;
 BEGIN
     v_var := USER_LOGIN('hejduk', 'qwertz');
-     DBMS_OUTPUT.PUT_LINE('LOGIN USER: ' || v_var);
+    DBMS_OUTPUT.PUT_LINE('LOGIN USER: ' || v_var);
 end;
 
 DECLARE
     v_var USERS.USER_ID%TYPE;
 BEGIN
     v_var := USER_LOGIN('nothing', 'nothing');
-     DBMS_OUTPUT.PUT_LINE('LOGIN USER: ' || v_var);
+    DBMS_OUTPUT.PUT_LINE('LOGIN USER: ' || v_var);
 end;
