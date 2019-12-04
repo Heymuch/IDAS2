@@ -129,6 +129,7 @@ CREATE OR REPLACE FUNCTION USER_NEW(
         --EXCEPTION WHEN OTHERS THEN RETURN NULL;
     END;
 
+-- Funkce pro přihlášení uživatele na základě jeho přihlašovacích údajů; Vrací ID uživatele; TESTED
 CREATE OR REPLACE FUNCTION USER_LOGIN(p_username USERS.USERNAME%TYPE, p_password USERS.PASSWORD%TYPE)
     RETURN USERS.USER_ID%TYPE IS
         v_id USERS.USER_ID%TYPE;
