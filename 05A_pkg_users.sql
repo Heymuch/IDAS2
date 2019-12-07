@@ -45,9 +45,9 @@ CREATE OR REPLACE PACKAGE BODY PKG_USER AS
             v_id USERS.USER_ID%TYPE;
         BEGIN
             INSERT INTO USERS(USERNAME, PASSWORD, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL, STATUS_ID)
-            VALUES (p_username, p_password, p_firstname, p_middlename, p_lastname, p_email, p_status);
-            SELECT USER_ID INTO v_id FROM USERS WHERE USERNAME = p_username;
+                VALUES (p_username, p_password, p_firstname, p_middlename, p_lastname, p_email, p_status);
             COMMIT;
+            SELECT USER_ID INTO v_id FROM USERS WHERE USERNAME = p_username;
             RETURN v_id;
             --EXCEPTION WHEN OTHERS THEN RETURN NULL;
         END;
