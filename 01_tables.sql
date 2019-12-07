@@ -40,12 +40,12 @@ alter table USERS_STATUS
 create table USERS
 (
     USER_ID     NUMBER           not null,
-    USERNAME    NVARCHAR2(20)    not null,
+    USERNAME    NVARCHAR2(50)    not null,
     PASSWORD    NVARCHAR2(256)   not null,
-    FIRST_NAME  NVARCHAR2(25)    not null,
-    MIDDLE_NAME NVARCHAR2(25),
-    LAST_NAME   NVARCHAR2(30)    not null,
-    EMAIL       NVARCHAR2(50)    not null,
+    FIRST_NAME  NVARCHAR2(30)    not null,
+    MIDDLE_NAME NVARCHAR2(30),
+    LAST_NAME   NVARCHAR2(40)    not null,
+    EMAIL       NVARCHAR2(100)   not null,
     STATUS_ID   NUMBER           not null
         constraint USERS_STATUS_FK
             references USERS_STATUS,
