@@ -71,7 +71,7 @@ CREATE OR REPLACE PACKAGE BODY PKG_STUDENT AS
     END;
 
     PROCEDURE UPDATE_YEAR(p_student_id T_ID, p_year T_YEAR) AS
-        BEGIN
-            UPDATE STUDENTS SET YEAR = p_year WHERE STUDENT_ID = p_student_id;
-        END;
+    BEGIN
+        UPDATE STUDENTS SET YEAR = p_year WHERE STUDENT_ID = p_student_id;
+    END;
 END;
