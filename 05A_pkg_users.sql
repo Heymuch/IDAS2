@@ -1,18 +1,30 @@
 CREATE OR REPLACE PACKAGE PKG_USER AS
+    -- ||| Aliasy
+    SUBTYPE T_ID IS USERS.USER_ID%TYPE;
+    SUBTYPE T_USERNAME IS USERS.USERNAME%TYPE;
+    SUBTYPE T_PASSWORD IS USERS.PASSWORD%TYPE;
+    SUBTYPE T_FIRST_NAME IS USERS.FIRST_NAME%TYPE;
+    SUBTYPE T_MIDDLE_NAME IS USERS.MIDDLE_NAME%TYPE;
+    SUBTYPE T_LAST_NAME IS USERS.LAST_NAME%TYPE;
+    SUBTYPE T_EMAIL IS USERS.EMAIL%TYPE;
+    SUBTYPE T_STATUS IS USERS.STATUS_ID%TYPE;
+    SUBTYPE T_ADMIN IS USERS.ADMIN%TYPE;
+    SUBTYPE T_PROFILE_IMAGE IS USERS.PROFILE_IMAGE%TYPE;
+
     -- ||| FUNKCE
     -- Funkce pro vytvoření nového uživatele
     -- @return ID nového uživatele
-    FUNCTION NEW(p_username USERS.USERNAME%TYPE, p_password USERS.PASSWORD%TYPE,
-        p_firstname USERS.FIRST_NAME%TYPE, p_middlename USERS.MIDDLE_NAME%TYPE, p_lastname USERS.LAST_NAME%TYPE,
-        p_email USERS.EMAIL%TYPE, p_status USERS.STATUS_ID%TYPE) RETURN USERS.USER_ID%TYPE;
+    FUNCTION NEW(p_username T_USERNAME, p_password T_PASSWORD,
+                 p_firstname T_FIRST_NAME, p_middlename T_MIDDLE_NAME, p_lastname T_LAST_NAME,
+                 p_email T_EMAIL, p_status T_STATUS) RETURN T_ID;
 
     -- Funkce pro přihlášení uživatele na základě jeho přihlašovacích údajů
     -- @return ID přihlášeného uživatele při přihlašení, jinak NULL
-    FUNCTION LOGIN(p_username USERS.USERNAME%TYPE, p_password USERS.PASSWORD%TYPE) RETURN USERS.USER_ID%TYPE;
+    FUNCTION LOGIN(p_username T_USERNAME, p_password T_PASSWORD) RETURN T_ID;
 
     -- Funkce vrací záznam o uživateli se vstupním ID
     -- @return cursor
-    FUNCTION GET_USER(p_user_id USERS.USER_ID%TYPE) RETURN SYS_REFCURSOR;
+    FUNCTION GET_USER(p_user_id T_ID) RETURN SYS_REFCURSOR;
 
     -- Funkce vrací všechny záznamy o uživatelých
     -- @return cursor
@@ -21,40 +33,43 @@ CREATE OR REPLACE PACKAGE PKG_USER AS
 
     -- ||| PROCEDURY
     -- Procedura pro změnu stavu uživatele (0: Neaktivní, 1: Aktivní)
-    PROCEDURE UPDATE_STATUS(p_user_id USERS.USER_ID%TYPE, p_status USERS_STATUS.STATUS_ID%TYPE);
+    PROCEDURE UPDATE_STATUS(p_user_id T_ID, p_status T_STATUS);
 
     -- Procedura pro změnu přihlašovacích údajů uživatele
-    PROCEDURE UPDATE_LOGIN(p_user_id USERS.USER_ID%TYPE, p_username USERS.USERNAME%TYPE, p_password USERS.PASSWORD%TYPE);
+    PROCEDURE UPDATE_LOGIN(p_user_id T_ID, p_username T_USERNAME, p_password T_PASSWORD);
 
     -- Procedura pro úpravu ostatních informací o uživateli
-    PROCEDURE UPDATE_DETAILS(p_user_id USERS.USER_ID%TYPE,
-        p_firstname USERS.FIRST_NAME%TYPE, p_middlename USERS.MIDDLE_NAME%TYPE, p_lastname USERS.LAST_NAME%TYPE,
-        p_email USERS.EMAIL%TYPE);
+    PROCEDURE UPDATE_DETAILS(p_user_id T_ID,
+                             p_firstname T_FIRST_NAME, p_middlename T_MIDDLE_NAME, p_lastname T_LAST_NAME,
+                             p_email T_EMAIL);
 
     -- Procedura pro přídání/odebrání administrátorské role
-    PROCEDURE UPDATE_ADMIN(p_user_id USERS.USER_ID%TYPE, p_admin USERS.ADMIN%TYPE);
+    PROCEDURE UPDATE_ADMIN(p_user_id T_ID, p_admin T_ADMIN);
+
+    -- Procedura pro změnu profilového obrázku
+    PROCEDURE UPDATE_PROFILE_IMAGE(p_user_id T_ID, p_profile_image T_PROFILE_IMAGE);
 END;
 
 
 
 CREATE OR REPLACE PACKAGE BODY PKG_USER AS
-    FUNCTION NEW(p_username USERS.USERNAME%TYPE, p_password USERS.PASSWORD%TYPE,
-            p_firstname USERS.FIRST_NAME%TYPE, p_middlename USERS.MIDDLE_NAME%TYPE, p_lastname USERS.LAST_NAME%TYPE,
-            p_email USERS.EMAIL%TYPE, p_status USERS.STATUS_ID%TYPE) RETURN USERS.USER_ID%TYPE IS
+    FUNCTION NEW(p_username T_USERNAME, p_password T_PASSWORD,
+                 p_firstname T_FIRST_NAME, p_middlename T_MIDDLE_NAME, p_lastname T_LAST_NAME,
+                 p_email T_EMAIL, p_status T_STATUS) RETURN T_ID IS
 
-            v_id USERS.USER_ID%TYPE;
-        BEGIN
-            INSERT INTO USERS(USERNAME, PASSWORD, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL, STATUS_ID)
-                VALUES (p_username, p_password, p_firstname, p_middlename, p_lastname, p_email, p_status);
-            COMMIT;
-            SELECT USER_ID INTO v_id FROM USERS WHERE USERNAME = p_username;
-            RETURN v_id;
-            --EXCEPTION WHEN OTHERS THEN RETURN NULL;
-        END;
+        v_id T_ID;
+    BEGIN
+        INSERT INTO USERS(USERNAME, PASSWORD, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL, STATUS_ID)
+        VALUES (p_username, p_password, p_firstname, p_middlename, p_lastname, p_email, p_status);
+        COMMIT;
+        SELECT USER_ID INTO v_id FROM USERS WHERE USERNAME = p_username;
+        RETURN v_id;
+        --EXCEPTION WHEN OTHERS THEN RETURN NULL;
+    END;
 
-    FUNCTION LOGIN(p_username USERS.USERNAME%TYPE, p_password USERS.PASSWORD%TYPE) RETURN USERS.USER_ID%TYPE IS
-        v_id USERS.USER_ID%TYPE;
-        v_status USERS.STATUS_ID%TYPE;
+    FUNCTION LOGIN(p_username T_USERNAME, p_password T_PASSWORD) RETURN T_ID IS
+        v_id     T_ID;
+        v_status T_STATUS;
     BEGIN
         SELECT USER_ID, STATUS_ID INTO v_id, v_status FROM USERS WHERE USERNAME = p_username AND PASSWORD = p_password;
 
@@ -64,10 +79,11 @@ CREATE OR REPLACE PACKAGE BODY PKG_USER AS
             RETURN NULL;
         END IF;
 
-        EXCEPTION WHEN OTHERS THEN RETURN NULL;
+    EXCEPTION
+        WHEN OTHERS THEN RETURN NULL;
     END;
 
-    FUNCTION GET_USER(p_user_id USERS.USER_ID%TYPE) RETURN SYS_REFCURSOR IS
+    FUNCTION GET_USER(p_user_id T_ID) RETURN SYS_REFCURSOR IS
         v_cursor SYS_REFCURSOR;
     BEGIN
         OPEN v_cursor FOR SELECT * FROM VW_USERS WHERE USER_ID = p_user_id;
@@ -82,30 +98,41 @@ CREATE OR REPLACE PACKAGE BODY PKG_USER AS
         RETURN v_cursor;
     END;
 
-    PROCEDURE UPDATE_STATUS(p_user_id USERS.USER_ID%TYPE, p_status USERS_STATUS.STATUS_ID%TYPE) IS
+    PROCEDURE UPDATE_STATUS(p_user_id T_ID, p_status T_STATUS) IS
     BEGIN
         UPDATE USERS SET STATUS_ID = p_status WHERE USER_ID = p_user_id;
         COMMIT;
     END;
 
-    PROCEDURE UPDATE_LOGIN(p_user_id USERS.USER_ID%TYPE, p_username USERS.USERNAME%TYPE, p_password USERS.PASSWORD%TYPE) IS
+    PROCEDURE UPDATE_LOGIN(p_user_id T_ID, p_username T_USERNAME, p_password T_PASSWORD) IS
     BEGIN
         UPDATE USERS SET USERNAME = p_username, PASSWORD = p_password WHERE USER_ID = p_user_id;
         COMMIT;
     END;
 
-    PROCEDURE UPDATE_DETAILS(p_user_id USERS.USER_ID%TYPE,
-        p_firstname USERS.FIRST_NAME%TYPE, p_middlename USERS.MIDDLE_NAME%TYPE, p_lastname USERS.LAST_NAME%TYPE,
-        p_email USERS.EMAIL%TYPE) IS
-        BEGIN
-            UPDATE USERS SET FIRST_NAME = p_firstname, MIDDLE_NAME = p_middlename, LAST_NAME = p_lastname, EMAIL = p_email WHERE USER_ID = p_user_id;
-            COMMIT;
-        END;
+    PROCEDURE UPDATE_DETAILS(p_user_id T_ID, p_firstname T_FIRST_NAME, p_middlename T_MIDDLE_NAME,
+                             p_lastname T_LAST_NAME,
+                             p_email T_EMAIL) IS
+    BEGIN
+        UPDATE USERS
+        SET FIRST_NAME  = p_firstname,
+            MIDDLE_NAME = p_middlename,
+            LAST_NAME   = p_lastname,
+            EMAIL       = p_email
+        WHERE USER_ID = p_user_id;
+        COMMIT;
+    END;
 
-    PROCEDURE UPDATE_ADMIN(p_user_id USERS.USER_ID%TYPE, p_admin USERS.ADMIN%TYPE) IS
-        BEGIN
-            UPDATE USERS SET ADMIN = p_admin WHERE USER_ID = p_user_id;
-            COMMIT;
-        END;
+    PROCEDURE UPDATE_ADMIN(p_user_id T_ID, p_admin T_ADMIN) IS
+    BEGIN
+        UPDATE USERS SET ADMIN = p_admin WHERE USER_ID = p_user_id;
+        COMMIT;
+    END;
+
+    PROCEDURE UPDATE_PROFILE_IMAGE(p_user_id T_ID, p_profile_image T_PROFILE_IMAGE) IS
+    BEGIN
+        UPDATE USERS SET PROFILE_IMAGE = p_profile_image WHERE USER_ID = p_user_id;
+        COMMIT;
+    END;
 END;
 
