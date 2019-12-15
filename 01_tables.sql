@@ -1,25 +1,6 @@
--- ||| TABULKY
-DROP TABLE CLASSROOMS CASCADE CONSTRAINTS;
-DROP TABLE COMMENTS CASCADE CONSTRAINTS;
-DROP TABLE COURSES CASCADE CONSTRAINTS;
-DROP TABLE GRADES CASCADE CONSTRAINTS;
-DROP TABLE GROUP_MESSAGES CASCADE CONSTRAINTS;
-DROP TABLE GROUPS CASCADE CONSTRAINTS;
-DROP TABLE PRIVATE_MESSAGES CASCADE CONSTRAINTS;
-DROP TABLE STUDENTS CASCADE CONSTRAINTS;
-DROP TABLE STUDENTS_GROUPS CASCADE CONSTRAINTS;
-DROP TABLE TEACHERS CASCADE CONSTRAINTS;
-DROP TABLE TIMETABLES CASCADE CONSTRAINTS;
-DROP TABLE USERS CASCADE CONSTRAINTS;
-DROP TABLE USERS_STATUS CASCADE CONSTRAINTS;
-DROP TABLE COURSES_GROUPS CASCADE CONSTRAINTS;
-DROP TABLE FILES CASCADE CONSTRAINTS;
-
-
 create table USERS_STATUS
 (
-    STATUS_ID NUMBER        not null
-        check ( STATUS_ID IN (0, 1) ),
+    STATUS_ID NUMBER        not null,
     NAME      NVARCHAR2(15) not null
 )
 /
@@ -37,6 +18,30 @@ alter table USERS_STATUS
         primary key (STATUS_ID)
 /
 
+alter table USERS_STATUS
+    add check ( STATUS_ID IN (0, 1) )
+/
+
+create table FILES
+(
+    FILE_ID   NUMBER               not null,
+    USER_ID   NUMBER               not null,
+    FILE_NAME NVARCHAR2(256)       not null,
+    FILE_TYPE NVARCHAR2(5),
+    FILE_DATA BLOB                 not null,
+    CREATED   DATE default SYSDATE not null
+)
+/
+
+create unique index FILES_FILE_ID_UINDEX
+    on FILES (FILE_ID)
+/
+
+alter table FILES
+    add constraint FILES_PK
+        primary key (FILE_ID)
+/
+
 create table USERS
 (
     USER_ID       NUMBER           not null,
@@ -46,14 +51,13 @@ create table USERS
     MIDDLE_NAME   NVARCHAR2(30),
     LAST_NAME     NVARCHAR2(40)    not null,
     EMAIL         NVARCHAR2(100)   not null,
-    STATUS_ID     NUMBER           not null
-        constraint USERS_STATUS_FK
-            references USERS_STATUS,
-    ADMIN         NUMBER default 0 not null
-        check ( ADMIN IN (0, 1) ),
-    PROFILE_IMAGE NUMBER
-        constraint USERS_FILES_FK
-            references FILES
+    STATUS_ID     NUMBER           not null,
+    ADMIN         NUMBER default 0 not null,
+    PROFILE_IMAGE NUMBER,
+    constraint USERS_FILES_FK
+        foreign key (PROFILE_IMAGE) references FILES,
+    constraint USERS_STATUS_FK
+        foreign key (STATUS_ID) references USERS_STATUS
 )
 /
 
@@ -75,6 +79,15 @@ create unique index USERS_USERNAME_UINDEX
 alter table USERS
     add constraint USERS_PK
         primary key (USER_ID)
+/
+
+alter table FILES
+    add constraint FILES_USERS_FK
+        foreign key (USER_ID) references USERS
+/
+
+alter table USERS
+    add check ( ADMIN IN (0, 1) )
 /
 
 create table COURSES
@@ -102,9 +115,9 @@ alter table COURSES
 create table TEACHERS
 (
     TEACHER_ID NUMBER not null,
-    USER_ID    NUMBER not null
-        constraint TEACHERS_USERS_FK
-            references USERS
+    USER_ID    NUMBER not null,
+    constraint TEACHERS_USERS_FK
+        foreign key (USER_ID) references USERS
 )
 /
 
@@ -124,12 +137,12 @@ alter table TEACHERS
 create table GROUPS
 (
     GROUP_ID        NUMBER           not null,
-    TEACHER_ID      NUMBER           not null
-        constraint GROUPS_TEACHERS_FK
-            references TEACHERS,
+    TEACHER_ID      NUMBER           not null,
     NAME            NVARCHAR2(10)    not null,
     MAX_CAPACITY    NUMBER           not null,
-    ACTUAL_CAPACITY NUMBER default 0 not null
+    ACTUAL_CAPACITY NUMBER default 0 not null,
+    constraint GROUPS_TEACHERS_FK
+        foreign key (TEACHER_ID) references TEACHERS
 )
 /
 
@@ -149,10 +162,10 @@ alter table GROUPS
 create table STUDENTS
 (
     STUDENT_ID NUMBER           not null,
-    USER_ID    NUMBER           not null
-        constraint STUDENTS_USERS_FK
-            references USERS,
-    YEAR       NUMBER default 1 not null
+    USER_ID    NUMBER           not null,
+    YEAR       NUMBER default 1 not null,
+    constraint STUDENTS_USERS_FK
+        foreign key (USER_ID) references USERS
 )
 /
 
@@ -172,18 +185,18 @@ alter table STUDENTS
 create table GRADES
 (
     GRADE_ID    NUMBER               not null,
-    STUDENT_ID  NUMBER               not null
-        constraint GRADES_STUDENTS_FK
-            references STUDENTS,
-    TEACHER_ID  NUMBER               not null
-        constraint GRADES_TEACHERS_FK
-            references TEACHERS,
-    COURSE_ID   NUMBER               not null
-        constraint GRADES_COURSES_FK
-            references COURSES,
+    STUDENT_ID  NUMBER               not null,
+    TEACHER_ID  NUMBER               not null,
+    COURSE_ID   NUMBER               not null,
     VALUE       NUMBER               not null,
     DESCRIPTION NVARCHAR2(256),
-    CREATED     DATE default SYSDATE not null
+    CREATED     DATE default SYSDATE not null,
+    constraint GRADES_COURSES_FK
+        foreign key (COURSE_ID) references COURSES,
+    constraint GRADES_STUDENTS_FK
+        foreign key (STUDENT_ID) references STUDENTS,
+    constraint GRADES_TEACHERS_FK
+        foreign key (TEACHER_ID) references TEACHERS
 )
 /
 
@@ -216,14 +229,14 @@ alter table CLASSROOMS
 create table TIMETABLES
 (
     TIMETABLE_ID NUMBER not null,
-    GROUP_ID     NUMBER not null
-        constraint TIMETABLES_GROUPS_FK
-            references GROUPS,
-    CLASSROOM_ID NUMBER not null
-        constraint TIMETABLES_CLSROOM_FK
-            references CLASSROOMS,
+    GROUP_ID     NUMBER not null,
+    CLASSROOM_ID NUMBER not null,
     BEGIN        DATE   not null,
-    END          DATE   not null
+    END          DATE   not null,
+    constraint TIMETABLES_CLSROOM_FK
+        foreign key (CLASSROOM_ID) references CLASSROOMS,
+    constraint TIMETABLES_GROUPS_FK
+        foreign key (GROUP_ID) references GROUPS
 )
 /
 
@@ -239,14 +252,14 @@ alter table TIMETABLES
 create table GROUP_MESSAGES
 (
     GMSG_ID  NUMBER               not null,
-    GROUP_ID NUMBER
-        constraint GMSG_GROUPS_FK
-            references GROUPS,
-    USER_ID  NUMBER               not null
-        constraint GMSG_USERS_FK
-            references USERS,
+    GROUP_ID NUMBER,
+    USER_ID  NUMBER               not null,
     CONTENT  NVARCHAR2(512)       not null,
-    CREATED  DATE default SYSDATE not null
+    CREATED  DATE default SYSDATE not null,
+    constraint GMSG_GROUPS_FK
+        foreign key (GROUP_ID) references GROUPS,
+    constraint GMSG_USERS_FK
+        foreign key (USER_ID) references USERS
 )
 /
 
@@ -262,14 +275,14 @@ alter table GROUP_MESSAGES
 create table PRIVATE_MESSAGES
 (
     PMSG_ID   NUMBER               not null,
-    FROM_USER NUMBER               not null
-        constraint PMSG_FROM_USR_FK
-            references USERS,
-    TO_USER   NUMBER               not null
-        constraint PMSG_TO_USR_FK
-            references USERS,
+    FROM_USER NUMBER               not null,
+    TO_USER   NUMBER               not null,
     CONTENT   NVARCHAR2(512)       not null,
-    CREATED   DATE default SYSDATE not null
+    CREATED   DATE default SYSDATE not null,
+    constraint PMSG_FROM_USR_FK
+        foreign key (FROM_USER) references USERS,
+    constraint PMSG_TO_USR_FK
+        foreign key (TO_USER) references USERS
 )
 /
 
@@ -285,14 +298,14 @@ alter table PRIVATE_MESSAGES
 create table COMMENTS
 (
     COMMENT_ID NUMBER               not null,
-    USER_ID    NUMBER               not null
-        constraint "comments_users.fk"
-            references USERS,
-    MESSAGE_ID NUMBER               not null
-        constraint COMMENTS_GMSG_FK
-            references GROUP_MESSAGES,
+    USER_ID    NUMBER               not null,
+    MESSAGE_ID NUMBER               not null,
     CONTENT    NVARCHAR2(256)       not null,
-    CREATED    DATE default SYSDATE not null
+    CREATED    DATE default SYSDATE not null,
+    constraint COMMENTS_GMSG_FK
+        foreign key (MESSAGE_ID) references GROUP_MESSAGES,
+    constraint "comments_users.fk"
+        foreign key (USER_ID) references USERS
 )
 /
 
@@ -307,49 +320,27 @@ alter table COMMENTS
 
 create table STUDENTS_GROUPS
 (
-    STUDENT_ID NUMBER not null
-        constraint STUDENTS_GROUPS_PK
-            primary key
-        constraint SG_STUDENTS_FK
-            references STUDENTS,
-    GROUP_ID   NUMBER not null
-        constraint SG_GROUPS_FK
-            references GROUPS
+    STUDENT_ID NUMBER not null,
+    GROUP_ID   NUMBER not null,
+    constraint STUDENTS_GROUPS_PK
+        primary key (STUDENT_ID),
+    constraint SG_GROUPS_FK
+        foreign key (GROUP_ID) references GROUPS,
+    constraint SG_STUDENTS_FK
+        foreign key (STUDENT_ID) references STUDENTS
 )
 /
 
 create table COURSES_GROUPS
 (
-    GROUP_ID  NUMBER not null
-        constraint COURSES_GROUPS_PK
-            primary key
-        constraint CRSGRP_GROUPS_FK
-            references GROUPS,
-    COURSE_ID NUMBER not null
-        constraint CRSGRP_COURSES_FK
-            references COURSES
+    GROUP_ID  NUMBER not null,
+    COURSE_ID NUMBER not null,
+    constraint COURSES_GROUPS_PK
+        primary key (GROUP_ID),
+    constraint CRSGRP_COURSES_FK
+        foreign key (COURSE_ID) references COURSES,
+    constraint CRSGRP_GROUPS_FK
+        foreign key (GROUP_ID) references GROUPS
 )
-/
-
-create table FILES
-(
-    FILE_ID   NUMBER               not null,
-    USER_ID   NUMBER               not null
-        constraint FILES_USERS_FK
-            references USERS,
-    FILE_NAME NVARCHAR2(256)       not null,
-    FILE_TYPE NVARCHAR2(5),
-    FILE_DATA BLOB                 not null,
-    CREATED   DATE default SYSDATE not null
-)
-/
-
-create unique index FILES_FILE_ID_UINDEX
-    on FILES (FILE_ID)
-/
-
-alter table FILES
-    add constraint FILES_PK
-        primary key (FILE_ID)
 /
 
