@@ -53,34 +53,52 @@ END;
 
 
 CREATE OR REPLACE PACKAGE BODY PKG_USER AS
+    FUNCTION VALID_EMAIL(p_email T_EMAIL) RETURN BOOLEAN AS
+    BEGIN
+        RETURN REGEXP_LIKE(p_email, '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,10}$');
+    END;
+
+    FUNCTION VALID_LOGIN(p_username T_USERNAME, p_password T_PASSWORD) RETURN BOOLEAN AS
+        v_count NUMBER;
+    BEGIN
+        SELECT COUNT(*) INTO v_count FROM USERS WHERE USERNAME = p_username AND PASSWORD = p_password;
+        RETURN (v_count = 1);
+    END;
+
     FUNCTION NEW(p_username T_USERNAME, p_password T_PASSWORD,
                  p_firstname T_FIRST_NAME, p_middlename T_MIDDLE_NAME, p_lastname T_LAST_NAME,
                  p_email T_EMAIL, p_status T_STATUS) RETURN T_ID IS
 
         v_id T_ID;
     BEGIN
+        -- validace e-mailu
+        IF NOT VALID_EMAIL(p_email) THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Can not create new user! Invalid e-mail! [' || p_email || ']');
+        end if;
+
+        -- vytvoření nového uživatele
         INSERT INTO USERS(USERNAME, PASSWORD, FIRST_NAME, MIDDLE_NAME, LAST_NAME, EMAIL, STATUS_ID)
-        VALUES (p_username, p_password, p_firstname, p_middlename, p_lastname, p_email, p_status);
+        VALUES (p_username, p_password, p_firstname, p_middlename, p_lastname, p_email, p_status)
+        RETURNING USER_ID INTO v_id;
         COMMIT;
-        SELECT USER_ID INTO v_id FROM USERS WHERE USERNAME = p_username;
         RETURN v_id;
-        --EXCEPTION WHEN OTHERS THEN RETURN NULL;
     END;
 
     FUNCTION LOGIN(p_username T_USERNAME, p_password T_PASSWORD) RETURN T_ID IS
         v_id     T_ID;
         v_status T_STATUS;
     BEGIN
-        SELECT USER_ID, STATUS_ID INTO v_id, v_status FROM USERS WHERE USERNAME = p_username AND PASSWORD = p_password;
-
-        IF v_status = 1 THEN
-            RETURN v_id;
-        ELSE
+        IF NOT VALID_LOGIN(p_username, p_password) THEN
             RETURN NULL;
         END IF;
 
-    EXCEPTION
-        WHEN OTHERS THEN RETURN NULL;
+        SELECT USER_ID, STATUS_ID INTO v_id, v_status FROM USERS WHERE USERNAME = p_username AND PASSWORD = p_password;
+
+        IF (v_status != 1) THEN
+            RETURN NULL;
+        END IF;
+
+        RETURN v_id;
     END;
 
     FUNCTION GET_USER(p_user_id T_ID) RETURN SYS_REFCURSOR IS
@@ -88,7 +106,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_USER AS
     BEGIN
         OPEN v_cursor FOR SELECT * FROM VW_USERS WHERE USER_ID = p_user_id;
         RETURN v_cursor;
-        --EXCEPTION WHEN OTHERS THEN RETURN NULL;
     END;
 
     FUNCTION GET_ALL RETURN SYS_REFCURSOR IS
@@ -114,6 +131,11 @@ CREATE OR REPLACE PACKAGE BODY PKG_USER AS
                              p_lastname T_LAST_NAME,
                              p_email T_EMAIL) IS
     BEGIN
+        -- validace e-mailu
+        IF NOT VALID_EMAIL(p_email) THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Can not udate user details! Invalid e-mail! [' || p_email || ']');
+        END IF;
+
         UPDATE USERS
         SET FIRST_NAME  = p_firstname,
             MIDDLE_NAME = p_middlename,

@@ -19,10 +19,28 @@ CREATE OR REPLACE PACKAGE PKG_TIMETABLE AS
 END;
 
 CREATE OR REPLACE PACKAGE BODY PKG_TIMETABLE AS
+    FUNCTION VALID_BEGIN_END(p_begin T_BEGIN, p_end T_END) RETURN BOOLEAN AS
+    BEGIN
+        RETURN ((p_end - p_begin) >= 0);
+    END;
+
     FUNCTION NEW(p_group_id PKG_GROUP.T_ID, p_classroom_id PKG_CLASSROOM.T_ID, p_begin T_BEGIN,
                  p_end T_END) RETURN T_ID AS
-        v_id T_ID;
+        v_id                 T_ID;
+        v_classroom_capacity PKG_CLASSROOM.T_CAPACITY;
+        v_group_capacity     PKG_GROUP.T_ACTUAL_CAPACITY;
     BEGIN
+        IF NOT VALID_BEGIN_END(p_begin, p_end) THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Cannot create new timetable! Begin and end of the session are not valid!');
+        end if;
+
+        SELECT CAPACITY INTO v_classroom_capacity FROM VW_CLASSROOMS;
+        SELECT ACTUAL_CAPACITY INTO v_group_capacity FROM VW_GROUPS;
+
+        IF (v_classroom_capacity < v_group_capacity) THEN
+            RAISE_APPLICATION_ERROR(-20001, 'Cannot create new timetable! Capacity of the classroom is too small!');
+        END IF;
+
         INSERT INTO TIMETABLES(GROUP_ID, CLASSROOM_ID, "BEGIN", "END")
         VALUES (p_group_id, p_classroom_id, p_begin, p_end)
         RETURNING TIMETABLE_ID INTO v_id;
