@@ -228,11 +228,11 @@ alter table CLASSROOMS
 
 create table TIMETABLES
 (
-    TIMETABLE_ID NUMBER not null,
-    GROUP_ID     NUMBER not null,
-    CLASSROOM_ID NUMBER not null,
-    BEGIN        DATE   not null,
-    END          DATE   not null,
+    TIMETABLE_ID NUMBER       not null,
+    GROUP_ID     NUMBER       not null,
+    CLASSROOM_ID NUMBER       not null,
+    BEGIN        TIMESTAMP(6) not null,
+    END          TIMESTAMP(6) not null,
     constraint TIMETABLES_CLSROOM_FK
         foreign key (CLASSROOM_ID) references CLASSROOMS,
     constraint TIMETABLES_GROUPS_FK
