@@ -233,11 +233,11 @@ alter table CLASSROOMS
 
 create table TIMETABLES
 (
-    TIMETABLE_ID NUMBER not null,
-    GROUP_ID     NUMBER not null,
-    CLASSROOM_ID NUMBER not null,
-    BEGIN        DATE   not null,
-    END          DATE   not null,
+    TIMETABLE_ID NUMBER       not null,
+    GROUP_ID     NUMBER       not null,
+    CLASSROOM_ID NUMBER       not null,
+    BEGIN        TIMESTAMP(6) not null,
+    END          TIMESTAMP(6) not null,
     constraint TIMETABLES_CLSROOM_FK
         foreign key (CLASSROOM_ID) references CLASSROOMS,
     constraint TIMETABLES_GROUPS_FK
@@ -327,8 +327,6 @@ create table STUDENTS_GROUPS
 (
     STUDENT_ID NUMBER not null,
     GROUP_ID   NUMBER not null,
-    constraint STUDENTS_GROUPS_PK
-        primary key (STUDENT_ID),
     constraint SG_GROUPS_FK
         foreign key (GROUP_ID) references GROUPS,
     constraint SG_STUDENTS_FK
@@ -340,8 +338,6 @@ create table COURSES_GROUPS
 (
     GROUP_ID  NUMBER not null,
     COURSE_ID NUMBER not null,
-    constraint COURSES_GROUPS_PK
-        primary key (GROUP_ID),
     constraint CRSGRP_COURSES_FK
         foreign key (COURSE_ID) references COURSES,
     constraint CRSGRP_GROUPS_FK
@@ -517,7 +513,7 @@ FROM STUDENTS
          JOIN VW_USERS ON VW_USERS.USER_ID = STUDENTS.USER_ID;
 
 CREATE OR REPLACE VIEW VW_FILES AS
-SELECT FILE_ID, FILES.USER_ID USER_ID, USERS.USERNAME USER_USERNAME, FIRST_NAME, FILE_TYPE, FILE_DATA, CREATED
+SELECT FILE_ID, FILES.USER_ID USER_ID, USERS.USERNAME USER_USERNAME, FIRST_NAME, FILE_NAME, FILE_TYPE, FILE_DATA, CREATED
 FROM FILES
          JOIN USERS ON FILES.USER_ID = USERS.USER_ID;
 
@@ -1485,7 +1481,7 @@ CREATE OR REPLACE PACKAGE BODY PKG_GROUP AS
         WHERE GROUP_ID = p_group_id;
 
         IF (v_free_capacity > 0) THEN
-            INSERT INTO STUDENTS_GROUPS(STUDENT_ID, GROUP_ID) VALUES (p_group_id, p_student_id);
+            INSERT INTO STUDENTS_GROUPS(STUDENT_ID, GROUP_ID) VALUES (p_student_id, p_group_id);
             UPDATE_ACTUAL_CAPACITY(p_group_id, v_actual_capacity + 1);
             COMMIT;
         ELSE
@@ -1494,8 +1490,8 @@ CREATE OR REPLACE PACKAGE BODY PKG_GROUP AS
     END;
 
     PROCEDURE REMOVE_STUDENT(p_group_id T_ID, p_student_id PKG_STUDENT.T_ID) AS
-        v_count           NUMBER;
-        v_actual_capacity T_ACTUAL_CAPACITY;
+        v_count NUMBER;
+            v_actual_capacity T_ACTUAL_CAPACITY;
     BEGIN
         SELECT COUNT(*) INTO v_count FROM STUDENTS_GROUPS WHERE GROUP_ID = p_group_id AND STUDENT_ID = p_student_id;
 
