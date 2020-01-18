@@ -335,8 +335,6 @@ create table COURSES_GROUPS
 (
     GROUP_ID  NUMBER not null,
     COURSE_ID NUMBER not null,
-    constraint COURSES_GROUPS_PK
-        primary key (GROUP_ID),
     constraint CRSGRP_COURSES_FK
         foreign key (COURSE_ID) references COURSES,
     constraint CRSGRP_GROUPS_FK
