@@ -157,7 +157,7 @@ CREATE OR REPLACE PACKAGE BODY PKG_GROUP AS
         WHERE GROUP_ID = p_group_id;
 
         IF (v_free_capacity > 0) THEN
-            INSERT INTO STUDENTS_GROUPS(STUDENT_ID, GROUP_ID) VALUES (p_group_id, p_student_id);
+            INSERT INTO STUDENTS_GROUPS(STUDENT_ID, GROUP_ID) VALUES (p_student_id, p_group_id);
             UPDATE_ACTUAL_CAPACITY(p_group_id, v_actual_capacity + 1);
             COMMIT;
         ELSE
