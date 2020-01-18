@@ -322,8 +322,6 @@ create table STUDENTS_GROUPS
 (
     STUDENT_ID NUMBER not null,
     GROUP_ID   NUMBER not null,
-    constraint STUDENTS_GROUPS_PK
-        primary key (STUDENT_ID),
     constraint SG_GROUPS_FK
         foreign key (GROUP_ID) references GROUPS,
     constraint SG_STUDENTS_FK
