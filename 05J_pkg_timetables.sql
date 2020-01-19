@@ -11,6 +11,8 @@ CREATE OR REPLACE PACKAGE PKG_TIMETABLE AS
 
     FUNCTION GET_BY_CLASSROOM(p_classroom_id PKG_CLASSROOM.T_ID) RETURN SYS_REFCURSOR;
 
+    FUNCTION GET_BY_ID(p_timetable_id T_ID) RETURN SYS_REFCURSOR;
+
     PROCEDURE REMOVE(p_timetable_id T_ID);
 
     PROCEDURE UPDATE_BEGIN(p_timetable_id T_ID, p_begin T_BEGIN);
@@ -66,6 +68,13 @@ CREATE OR REPLACE PACKAGE BODY PKG_TIMETABLE AS
         v_cursor SYS_REFCURSOR;
     BEGIN
         OPEN v_cursor FOR SELECT * FROM VW_TIMETABLES WHERE CLASSROOM_ID = p_classroom_id;
+        RETURN v_cursor;
+    END;
+
+    FUNCTION GET_BY_ID(p_timetable_id T_ID) RETURN SYS_REFCURSOR AS
+        v_cursor SYS_REFCURSOR;
+    BEGIN
+        OPEN v_cursor FOR SELECT * FROM VW_TIMETABLES WHERE TIMETABLE_ID = p_timetable_id;
         RETURN v_cursor;
     END;
 
