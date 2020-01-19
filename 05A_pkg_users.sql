@@ -53,11 +53,13 @@ END;
 
 
 CREATE OR REPLACE PACKAGE BODY PKG_USER AS
+    -- Privátní funkce pro validaci e-mailové ardesy
     FUNCTION VALID_EMAIL(p_email T_EMAIL) RETURN BOOLEAN AS
     BEGIN
         RETURN REGEXP_LIKE(p_email, '^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,10}$');
     END;
 
+    -- Privátní funkce pro validaci přihlašovacích údajů
     FUNCTION VALID_LOGIN(p_username T_USERNAME, p_password T_PASSWORD) RETURN BOOLEAN AS
         v_count NUMBER;
     BEGIN

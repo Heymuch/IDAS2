@@ -23,7 +23,7 @@ END;
 CREATE OR REPLACE PACKAGE BODY PKG_TIMETABLE AS
     FUNCTION VALID_BEGIN_END(p_begin T_BEGIN, p_end T_END) RETURN BOOLEAN AS
     BEGIN
-        RETURN ((p_end - p_begin) >= 0);
+        RETURN (p_end > p_begin);
     END;
 
     FUNCTION NEW(p_group_id PKG_GROUP.T_ID, p_classroom_id PKG_CLASSROOM.T_ID, p_begin T_BEGIN,
