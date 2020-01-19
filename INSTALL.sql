@@ -1,8 +1,3 @@
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- TABULKY
--- *********************************************************************************************************************
--- *********************************************************************************************************************
 create table USERS_STATUS
 (
     STATUS_ID NUMBER        not null,
@@ -345,11 +340,6 @@ create table COURSES_GROUPS
 )
 /
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- SEKVENCE
--- *********************************************************************************************************************
--- *********************************************************************************************************************
 CREATE SEQUENCE users_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE pmsgs_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE students_id_seq START WITH 1 INCREMENT BY 1;
@@ -363,124 +353,91 @@ CREATE SEQUENCE timetables_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE comments_id_seq START WITH 1 INCREMENT BY 1;
 CREATE SEQUENCE files_id_seq START WITH 1 INCREMENT BY 1;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- TIGGERY
--- *********************************************************************************************************************
--- *********************************************************************************************************************
+-- ||| TRIGGERY
 CREATE OR REPLACE TRIGGER users_insert_trg
-    BEFORE INSERT
-    ON USERS
-    FOR EACH ROW
-    WHEN (new.USER_ID IS NULL)
-BEGIN
-    :new.USER_ID := users_id_seq.nextval;
-END;
+    BEFORE INSERT ON USERS
+    FOR EACH ROW WHEN (new.USER_ID IS NULL)
+    BEGIN
+        :new.USER_ID := users_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER pmsgs_insert_trg
-    BEFORE INSERT
-    ON PRIVATE_MESSAGES
-    FOR EACH ROW
-    WHEN (new.PMSG_ID IS NULL)
-BEGIN
-    :new.PMSG_ID := pmsgs_id_seq.nextval;
-END;
+    BEFORE INSERT ON PRIVATE_MESSAGES
+    FOR EACH ROW WHEN (new.PMSG_ID IS NULL)
+    BEGIN
+        :new.PMSG_ID := pmsgs_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER students_insert_trg
-    BEFORE INSERT
-    ON STUDENTS
-    FOR EACH ROW
-    WHEN (new.STUDENT_ID IS NULL)
-BEGIN
-    :new.STUDENT_ID := students_id_seq.nextval;
-END;
+    BEFORE INSERT ON STUDENTS
+    FOR EACH ROW WHEN (new.STUDENT_ID IS NULL)
+    BEGIN
+        :new.STUDENT_ID := students_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER courses_insert_trg
-    BEFORE INSERT
-    ON COURSES
-    FOR EACH ROW
-    WHEN (new.COURSE_ID IS NULL)
-BEGIN
-    :new.COURSE_ID := courses_id_seq.nextval;
-END;
+    BEFORE INSERT ON COURSES
+    FOR EACH ROW WHEN (new.COURSE_ID IS NULL)
+    BEGIN
+        :new.COURSE_ID := courses_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER teachers_insert_trg
-    BEFORE INSERT
-    ON TEACHERS
-    FOR EACH ROW
-    WHEN (new.TEACHER_ID IS NULL)
-BEGIN
-    :new.TEACHER_ID := teachers_id_seq.nextval;
-END;
+    BEFORE INSERT ON TEACHERS
+    FOR EACH ROW WHEN (new.TEACHER_ID IS NULL)
+    BEGIN
+        :new.TEACHER_ID := teachers_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER grades_insert_trg
-    BEFORE INSERT
-    ON GRADES
-    FOR EACH ROW
-    WHEN (new.GRADE_ID IS NULL)
-BEGIN
-    :new.GRADE_ID := grades_id_seq.nextval;
-END;
+    BEFORE INSERT ON GRADES
+    FOR EACH ROW WHEN (new.GRADE_ID IS NULL)
+    BEGIN
+        :new.GRADE_ID := grades_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER groups_insert_trg
-    BEFORE INSERT
-    ON GROUPS
-    FOR EACH ROW
-    WHEN (new.GROUP_ID IS NULL)
-BEGIN
-    :new.GROUP_ID := groups_id_seq.nextval;
-END;
+    BEFORE INSERT ON GROUPS
+    FOR EACH ROW WHEN (new.GROUP_ID IS NULL)
+    BEGIN
+        :new.GROUP_ID := groups_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER classrooms_insert_trg
-    BEFORE INSERT
-    ON CLASSROOMS
-    FOR EACH ROW
-    WHEN (new.CLASSROOM_ID IS NULL)
-BEGIN
-    :new.CLASSROOM_ID := classrooms_id_seq.nextval;
-END;
+    BEFORE INSERT ON CLASSROOMS
+    FOR EACH ROW WHEN (new.CLASSROOM_ID IS NULL)
+    BEGIN
+        :new.CLASSROOM_ID := classrooms_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER gmsg_insert_trg
-    BEFORE INSERT
-    ON GROUP_MESSAGES
-    FOR EACH ROW
-    WHEN (new.GMSG_ID IS NULL)
-BEGIN
-    :new.GMSG_ID := gmsgs_id_seq.nextval;
-END;
+    BEFORE INSERT ON GROUP_MESSAGES
+    FOR EACH ROW WHEN (new.GMSG_ID IS NULL)
+    BEGIN
+        :new.GMSG_ID := gmsgs_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER timetables_insert_trg
-    BEFORE INSERT
-    ON TIMETABLES
-    FOR EACH ROW
-    WHEN (new.TIMETABLE_ID IS NULL)
-BEGIN
-    :new.TIMETABLE_ID := timetables_id_seq.nextval;
-END;
+    BEFORE INSERT ON TIMETABLES
+    FOR EACH ROW WHEN (new.TIMETABLE_ID IS NULL)
+    BEGIN
+        :new.TIMETABLE_ID := timetables_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER comments_insert_trg
-    BEFORE INSERT
-    ON COMMENTS
-    FOR EACH ROW
-    WHEN (new.COMMENT_ID IS NULL)
-BEGIN
-    :new.COMMENT_ID := comments_id_seq.nextval;
-END;
+    BEFORE INSERT ON COMMENTS
+    FOR EACH ROW WHEN (new.COMMENT_ID IS NULL)
+    BEGIN
+        :new.COMMENT_ID := comments_id_seq.nextval;
+    END;
 
 CREATE OR REPLACE TRIGGER files_insert_trg
-    BEFORE INSERT
-    ON FILES
-    FOR EACH ROW
-    WHEN (new.FILE_ID IS NULL)
-BEGIN
-    :new.FILE_ID := FILES_ID_SEQ.nextval;
-END;
+    BEFORE INSERT ON FILES
+    FOR EACH ROW WHEN (new.FILE_ID IS NULL)
+    BEGIN
+        :new.FILE_ID := FILES_ID_SEQ.nextval;
+    END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- POHLEDY
--- *********************************************************************************************************************
--- *********************************************************************************************************************
 CREATE OR REPLACE VIEW VW_USERS_STATUS AS
 SELECT *
 FROM USERS_STATUS;
@@ -642,12 +599,7 @@ FROM PRIVATE_MESSAGES
          JOIN VW_USERS USERS_FROM ON FROM_USER = USERS_FROM.USER_ID
          JOIN VW_USERS USERS_TO ON TO_USER = USERS_TO.USER_ID;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_USER
--- *********************************************************************************************************************
--- *********************************************************************************************************************
-    CREATE OR REPLACE PACKAGE PKG_USER AS
+CREATE OR REPLACE PACKAGE PKG_USER AS
     -- ||| Aliasy
     SUBTYPE T_ID IS USERS.USER_ID%TYPE;
     SUBTYPE T_USERNAME IS USERS.USERNAME%TYPE;
@@ -702,11 +654,13 @@ END;
 
 
 CREATE OR REPLACE PACKAGE BODY PKG_USER AS
+    -- Privátní funkce pro validaci e-mailové ardesy
     FUNCTION VALID_EMAIL(p_email T_EMAIL) RETURN BOOLEAN AS
     BEGIN
-        RETURN REGEXP_LIKE(p_email, '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,4}$');
+        RETURN REGEXP_LIKE(p_email, '^[A-Za-z0-9._%+\-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,10}$');
     END;
 
+    -- Privátní funkce pro validaci přihlašovacích údajů
     FUNCTION VALID_LOGIN(p_username T_USERNAME, p_password T_PASSWORD) RETURN BOOLEAN AS
         v_count NUMBER;
     BEGIN
@@ -807,12 +761,7 @@ CREATE OR REPLACE PACKAGE BODY PKG_USER AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_STUDENT
--- *********************************************************************************************************************
--- *********************************************************************************************************************
-    CREATE OR REPLACE PACKAGE PKG_STUDENT AS
+CREATE OR REPLACE PACKAGE PKG_STUDENT AS
     -- ||| ALIASY
     SUBTYPE T_ID IS STUDENTS.STUDENT_ID%TYPE;
     SUBTYPE T_YEAR IS STUDENTS.YEAR%TYPE;
@@ -888,12 +837,7 @@ CREATE OR REPLACE PACKAGE BODY PKG_STUDENT AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_FILE
--- *********************************************************************************************************************
--- *********************************************************************************************************************
-    CREATE OR REPLACE PACKAGE PKG_FILE AS
+CREATE OR REPLACE PACKAGE PKG_FILE AS
     -- ||| Aliasy
     SUBTYPE T_ID IS FILES.FILE_ID%TYPE;
     SUBTYPE T_NAME IS FILES.FILE_NAME%TYPE;
@@ -917,69 +861,83 @@ END;
 CREATE OR REPLACE PACKAGE BODY PKG_FILE AS
     FUNCTION CHECK_ID(p_file_id T_ID) RETURN BOOLEAN AS
         v_count NUMBER;
-    BEGIN
-        SELECT COUNT(*) INTO v_count FROM FILES WHERE FILE_ID = p_file_id;
-        RETURN (v_count = 1);
-    END;
+        BEGIN
+            SELECT COUNT(*) INTO v_count FROM FILES WHERE FILE_ID = p_file_id;
+            RETURN (v_count = 1);
+        END;
 
     FUNCTION NEW(p_user_id PKG_USER.T_ID, p_file_name T_NAME, p_file_type T_TYPE, p_file_data T_DATA) RETURN T_ID AS
         v_id T_ID;
-    BEGIN
-        INSERT INTO FILES(USER_ID, FILE_NAME, FILE_TYPE, FILE_DATA)
-        VALUES (p_user_id, p_file_name, p_file_type, p_file_data)
-        RETURNING FILE_ID INTO v_id;
-        COMMIT;
-        RETURN v_id;
-    END;
+        BEGIN
+            INSERT INTO FILES(USER_ID, FILE_NAME, FILE_TYPE, FILE_DATA)
+            VALUES  (p_user_id, p_file_name, p_file_type, p_file_data)
+            RETURNING FILE_ID INTO v_id;
+            COMMIT;
+            RETURN v_id;
+        END;
 
     FUNCTION GET_ALL RETURN SYS_REFCURSOR AS
         v_cursor SYS_REFCURSOR;
-    BEGIN
-        OPEN v_cursor FOR SELECT * FROM VW_FILES;
-        RETURN v_cursor;
-    END;
+        BEGIN
+            OPEN v_cursor FOR SELECT * FROM VW_FILES;
+            RETURN v_cursor;
+        END;
 
     FUNCTION GET_BY_ID(p_file_id T_ID) RETURN SYS_REFCURSOR AS
         v_cursor SYS_REFCURSOR;
-    BEGIN
-        OPEN v_cursor FOR SELECT * FROM VW_FILES WHERE FILE_ID = p_file_id;
-        RETURN v_cursor;
-    END;
+        BEGIN
+            OPEN v_cursor FOR SELECT * FROM VW_FILES WHERE FILE_ID = p_file_id;
+            RETURN v_cursor;
+        END;
 
     FUNCTION GET_BY_USER(p_user_id PKG_USER.T_ID) RETURN SYS_REFCURSOR AS
         v_curosr SYS_REFCURSOR;
-    BEGIN
-        OPEN v_curosr FOR SELECT * FROM VW_FILES WHERE USER_ID = p_user_id;
-        RETURN v_curosr;
-    END;
+        BEGIN
+            OPEN v_curosr FOR SELECT * FROM VW_FILES WHERE USER_ID = p_user_id;
+            RETURN v_curosr;
+        END;
 
     PROCEDURE REMOVE(p_file_id T_ID) AS
-    BEGIN
-        DELETE FROM FILES WHERE FILE_ID = p_file_id;
-        COMMIT;
-    END;
+        BEGIN
+            DELETE FROM FILES WHERE FILE_ID = p_file_id;
+            COMMIT;
+        END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_TEACHER
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_TEACHER AS
+    -- +================================================================================================================
+    -- | Aliasy
     SUBTYPE T_ID IS TEACHERS.TEACHER_ID%TYPE;
+    -- +----------------------------------------------------------------------------------------------------------------
 
+    -- +================================================================================================================
+    -- | Funkce / Procedury
+
+    -- Funkce pro vytvoření nového učitele.
+    -- @param p_user_id ID uživatele
+    -- @return ID nově vytvořeného uživatele
     FUNCTION NEW(p_user_id PKG_USER.T_ID) RETURN T_ID;
 
+    -- Funkce pro zjištění, zdali uživatel je učitelem.
+    -- @param p_user_id ID uživatele
+    -- @return true pokud je uživatel učitelem, jinak false
     FUNCTION IS_TEACHER(p_user_id PKG_USER.T_ID) RETURN BOOLEAN;
 
+    -- Funkce vrátí všechny registrované učitele.
     FUNCTION GET_ALL RETURN SYS_REFCURSOR;
 
+    -- Funkce vrátí záznam o daném učiteli.
+    -- @param p_teacher_id ID učitele
+    -- @return CURSOR
+    -- @throws Exception pokud neexistuje učitel s daným ID
     FUNCTION GET_BY_ID(p_teacher_id T_ID) RETURN SYS_REFCURSOR;
 
     FUNCTION GET_BY_USER(p_user_id PKG_USER.T_ID) RETURN SYS_REFCURSOR;
+    -- +----------------------------------------------------------------------------------------------------------------
 END;
 
 CREATE OR REPLACE PACKAGE BODY PKG_TEACHER AS
+    -- @TODO kontrola jestli uživatel není již učitelem
     FUNCTION NEW(p_user_id PKG_USER.T_ID) RETURN T_ID AS
         v_id T_ID;
     BEGIN
@@ -1017,11 +975,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_TEACHER AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_CLASSROOM
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_CLASSROOM AS
     SUBTYPE T_ID IS CLASSROOMS.CLASSROOM_ID%TYPE;
     SUBTYPE T_NAME IS CLASSROOMS.NAME%TYPE;
@@ -1090,11 +1043,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_CLASSROOM AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_COURSE
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_COURSE AS
     SUBTYPE T_ID IS COURSES.COURSE_ID%TYPE;
     SUBTYPE T_FULL_NAME IS COURSES.FULL_NAME%TYPE;
@@ -1167,11 +1115,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_COURSE AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_GRADE
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_GRADES AS
     SUBTYPE T_ID IS GRADES.GRADE_ID%TYPE;
     SUBTYPE T_VALUE IS GRADES.VALUE%TYPE;
@@ -1288,11 +1231,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_GRADES AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_USERS_STATUS
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_USERS_STATUS AS
     SUBTYPE T_ID IS USERS_STATUS.STATUS_ID%TYPE;
 
@@ -1317,11 +1255,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_USERS_STATUS AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_GROUPS
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_GROUP AS
     SUBTYPE T_ID IS GROUPS.GROUP_ID%TYPE;
     SUBTYPE T_NAME IS GROUPS.NAME%TYPE;
@@ -1516,11 +1449,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_GROUP AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_GROUPS
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_TIMETABLE AS
     SUBTYPE T_ID IS TIMETABLES.TIMETABLE_ID%TYPE;
     SUBTYPE T_BEGIN IS TIMETABLES."BEGIN"%TYPE;
@@ -1611,11 +1539,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_TIMETABLE AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_PMSG
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_PMSG AS
     SUBTYPE T_ID IS PRIVATE_MESSAGES.PMSG_ID%TYPE;
     SUBTYPE T_CONTENT IS PRIVATE_MESSAGES.CONTENT%TYPE;
@@ -1671,11 +1594,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_PMSG AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_GMSG
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_GMSG AS
     SUBTYPE T_ID IS GROUP_MESSAGES.GMSG_ID%TYPE;
     SUBTYPE T_CONTENT IS GROUP_MESSAGES.CONTENT%TYPE;
@@ -1764,11 +1682,6 @@ CREATE OR REPLACE PACKAGE BODY PKG_GMSG AS
     END;
 END;
 
--- *********************************************************************************************************************
--- *********************************************************************************************************************
--- BALÍČKY --- PKG_COMMENT
--- *********************************************************************************************************************
--- *********************************************************************************************************************
     CREATE OR REPLACE PACKAGE PKG_COMMENT AS
     SUBTYPE T_ID IS COMMENTS.COMMENT_ID%TYPE;
     SUBTYPE T_CONTENT IS COMMENTS.CONTENT%TYPE;
@@ -1856,3 +1769,8 @@ CREATE OR REPLACE PACKAGE BODY PKG_COMMENT AS
         COMMIT;
     END;
 END;
+
+    -- ||| USERS_STATUS
+INSERT INTO USERS_STATUS (STATUS_ID, NAME) VALUES (0, 'Neaktivní');
+INSERT INTO USERS_STATUS (STATUS_ID, NAME) VALUES (1, 'Aktivní');
+COMMIT;
